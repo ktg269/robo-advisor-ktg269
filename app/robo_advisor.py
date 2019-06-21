@@ -3,6 +3,7 @@
 import csv
 import json
 import os
+import datetime
 
 from dotenv import load_dotenv
 import requests
@@ -23,7 +24,7 @@ def to_usd(my_price):
 api_key =os.environ.get("ALPHAVANTAGE_API_KEY") # to obtain API_KEY from env file. 
 
 
-symbol = input("Please input one or more stock symbols (e.g. 'MSFT', 'AAPL') and press enter: ") # Asking for user input of stock symbol
+symbol = input("Please input one or more stock symbols (e.g. MSFT) and press enter: ") # Asking for user input of stock symbol
 
 def returned_response(symbol):  #> To define and return the result after user input. TODO: How to integrate multiple inputs (for further challenge)
     request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
@@ -70,11 +71,12 @@ recent_low = min(low_prices)
 
 #csv_file_path = "data/prices.csv" # a relative filepath
 
-csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+file_name = symbol +".csv"
+csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices_" + file_name)
 
 csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
 
-with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writing"
+with open(csv_file_path, "w", newline='') as csv_file: # "w" means "open the file for writing"
     writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
     writer.writeheader() # uses fieldnames set above
     for date in dates:
@@ -87,29 +89,26 @@ with open(csv_file_path, "w") as csv_file: # "w" means "open the file for writin
             "close": daily_prices["4. close"],
             "volume": daily_prices["5. volume"]
         })
-    writer.writerow({
-        "timestamp": "TODO",
-        "open": "TODO",
-        "high": "TODO",
-        "low": "TODO",
-        "close": "TODO",
-        "volume": "TODO"
-    })
-   
 
 
+# DISPLAY RESULTS
+
+current_time = datetime.datetime.now()  #> current time
+
+formatted_current_time = current_time.strftime("%Y-%m-%d %H:%M:%S")  #>'2019-06-21 14:00:00' (reference: from prior class discussion)
+
+
+
 print("-------------------------")
-print("SELECTED SYMBOL: XYZ")
+print(f"YOUR SELECTED SYMBOL: {symbol}")
 print("-------------------------")
-print("REQUESTING STOCK MARKET DATA...")
-print("REQUEST AT: 2018-02-20 02:00pm")
-print("-------------------------")
-print(f"LATEST DAY: {last_refreshed}")
+print(f"REQUEST AT: {formatted_current_time}")
+print(f"LAST REFRESH DATE AND TIME: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
-print("RECOMMENDATION: BUY!")
+print("RECOMMENDATION: TODO")
 print("RECOMMENDATION REASON: TODO")
 print("-------------------------")
 print(f"WRITING DATA TO CSV: {csv_file_path}...")

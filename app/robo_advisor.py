@@ -7,7 +7,7 @@ import os
 from dotenv import load_dotenv
 import requests
 
-
+load_dotenv() #> to load contents of the .env file into the script's environment
 
 # utility function to convert float or integer to usd-formatted string (for printing)
 
@@ -20,16 +20,18 @@ def to_usd(my_price):
 # INFO INPUTS
 #
 
-api_key =os.environ.get("ALPHAVANTAGE_API_KEY") #"demo"
+api_key =os.environ.get("ALPHAVANTAGE_API_KEY") # to obtain API_KEY from env file. 
 
 
-symbol = "MSFT" #TODO: accept user input
+symbol = input("Please input one or more stock symbols (e.g. 'MSFT', 'AAPL') and press enter: ") # Asking for user input of stock symbol
 
-request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
+def returned_response(symbol):  #> To define and return the result after user input. TODO: How to integrate multiple inputs (for further challenge)
+    request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
+    response = requests.get(request_url)
+    parsed_response = json.loads(response.text)
+    return parsed_response
 
-response = requests.get(request_url)
-
-parsed_response = json.loads(response.text)
+parsed_response = returned_response(symbol)
 
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 

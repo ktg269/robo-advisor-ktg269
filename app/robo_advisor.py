@@ -24,7 +24,7 @@ def to_usd(my_price):
 api_key =os.environ.get("ALPHAVANTAGE_API_KEY") # to obtain API_KEY from env file. 
 
 
-symbol = input("Please input one or more stock symbols (e.g. MSFT) and press enter: ") # Asking for user input of stock symbol
+symbol = input("Please input a stock symbol (e.g. MSFT) and press enter: ") # Asking for user input of stock symbol
 
 def returned_response(symbol):  #> To define and return the result after user input. TODO: How to integrate multiple inputs (for further challenge)
     request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
@@ -45,7 +45,6 @@ dates = list(tsd.keys()) #TODO: assumes first day is on top, but consider sortin
 latest_day = dates[0] #TODO: make the latest date dynamic
 
 latest_close = tsd[latest_day]["4. close"]
-
 
 
 # get high price from each day
@@ -97,21 +96,47 @@ current_time = datetime.datetime.now()  #> current time
 
 formatted_current_time = current_time.strftime("%Y-%m-%d %H:%M:%S")  #>'2019-06-21 14:00:00' (reference: from prior class discussion)
 
+# RECOMMENDATION CALCULATION
+
+average_price = (recent_high + recent_low)/2 #> Calculate the average of recent high and recent low as a basis
+my_target_price = average_price*0.85 #> My target price is 15% premium to the average price due to the recent market strength. If my target price is above latest close price, it is a BUY. If not, it is SELL. If same, it is HOLD.
 
 
 print("-------------------------")
 print(f"YOUR SELECTED SYMBOL: {symbol}")
 print("-------------------------")
 print(f"REQUEST AT: {formatted_current_time}")
-print(f"LAST REFRESH DATE AND TIME: {last_refreshed}")
+print(f"LAST REFRESH DATE: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
-print("RECOMMENDATION: TODO")
-print("RECOMMENDATION REASON: TODO")
+
+if str(my_target_price) > latest_close: #>BUY RATING
+    print("RECOMMENDATION: BUY")
+elif str(my_target_price) < latest_close: #>SELL RATING
+    print("RECOMMENDATION: SELL")
+else:
+    print("RECOMMENDATION: HOLD") #>HOLD RATING
+
+if str(my_target_price) > latest_close: #> EXPLANATION FOR BUY RATING
+    print(f"RECOMMENDATION REASON: OUR TARGET PRICE IS BASED UPON THE AVERAGE OF RECENT HIGH\n"+ 
+    "AND RECENT LOW MINUS 15% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
+    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSION WITH IRAN\n"+
+    "OUR TARGET PRICE IS HIGHER THAN THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A BUY RATING\n")
+elif str(my_target_price) < latest_close: #> EXPLANATION FOR SELL RATING
+    print(f"RECOMMENDATION REASON: OUR TARGET PRICE IS BASED UPON THE AVERAGE OF RECENT HIGH\n"+ 
+    "AND RECENT LOW MINUS 15% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
+    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSION WITH IRAN\n"+
+    "OUR TARGET PRICE IS LOWER THAN THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A SELL RATING\n")
+else: #> EXPLANATION FOR HOLD RATING
+    print(f"RECOMMENDATION REASON: OUR TARGET PRICE IS BASED UPON THE AVERAGE OF RECENT HIGH\n"+ 
+    "AND RECENT LOW MINUS 15% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
+    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSION WITH IRAN\n"+
+    "OUR TARGET PRICE IS SAME THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A HOLD RATING\n")
 print("-------------------------")
 print(f"WRITING DATA TO CSV: {csv_file_path}...")
+print("YOUR OUTPUT TO CSV FILE IS COMPLETE")
 print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")

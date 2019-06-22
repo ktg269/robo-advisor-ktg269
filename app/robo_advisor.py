@@ -10,8 +10,6 @@ import requests
 
 load_dotenv() #> to load contents of the .env file into the script's environment
 
-# utility function to convert float or integer to usd-formatted string (for printing)
-
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price) #> 12,000.71
 
@@ -23,13 +21,30 @@ def to_usd(my_price):
 
 api_key =os.environ.get("ALPHAVANTAGE_API_KEY") # to obtain API_KEY from env file. 
 
-
 symbol = input("Please input a stock symbol (e.g. MSFT) and press enter: ") # Asking for user input of stock symbol
+
+unacceptable_value = [1,2,3,4,5,6,7,8,9,0,"+","*","/","-"]
+if  str(unacceptable_value) in symbol: # to prevent HTML request for non-alphabetical entry
+    print("SOMETHING WENT WRONG. YOUR INPUT IS EITHER INVALID OR WE ARE UNABLE TO FIND A STOCK\n"+
+    "THAT MATCHES WITH THE SYMBOL YOU ENTERED. PLEASE CHECK THE SYMBOL AND TRY IT AGAIN. GOOD-BYE")
+    exit()
 
 def returned_response(symbol):  #> To define and return the result after user input. TODO: How to integrate multiple inputs (for further challenge)
     request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
     response = requests.get(request_url)
     parsed_response = json.loads(response.text)
+    #print(response.status_code) #> 200
+    
+    
+
+    try:
+        parsed_response["Time Series (Daily)"]
+    except: #> "888888" will generate below error message
+        print("ERROR MESSAGE")
+        print("SOMETHING WENT WRONG. YOUR INPUT IS EITHER INVALID OR WE ARE UNABLE TO FIND A STOCK\n"+
+        "THAT MATCHES WITH THE SYMBOL YOU ENTERED. PLEASE CHECK THE SYMBOL AND TRY IT AGAIN. GOOD-BYE")
+        exit()
+    
     return parsed_response
 
 parsed_response = returned_response(symbol)
@@ -99,7 +114,7 @@ formatted_current_time = current_time.strftime("%Y-%m-%d %H:%M:%S")  #>'2019-06-
 # RECOMMENDATION CALCULATION
 
 average_price = (recent_high + recent_low)/2 #> Calculate the average of recent high and recent low as a basis
-my_target_price = average_price*0.85 #> My target price is 15% premium to the average price due to the recent market strength. If my target price is above latest close price, it is a BUY. If not, it is SELL. If same, it is HOLD.
+my_target_price = average_price*0.9 #> My target price is 15% premium to the average price due to the recent market strength. If my target price is above latest close price, it is a BUY. If not, it is SELL. If same, it is HOLD.
 
 
 print("-------------------------")
@@ -112,31 +127,27 @@ print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
 
-if str(my_target_price) > latest_close: #>BUY RATING
+if str(my_target_price) > latest_close: #>BUY RATING (example: Walmart "WMT" )
     print("RECOMMENDATION: BUY")
-elif str(my_target_price) < latest_close: #>SELL RATING
-    print("RECOMMENDATION: SELL")
-else:
-    print("RECOMMENDATION: HOLD") #>HOLD RATING
+elif str(my_target_price) < latest_close: #>SELL RATING (example: Aaple "AAPL" )
+    print("RECOMMENDATION: DO NOT BUY")
 
 if str(my_target_price) > latest_close: #> EXPLANATION FOR BUY RATING
     print(f"RECOMMENDATION REASON: OUR TARGET PRICE IS BASED UPON THE AVERAGE OF RECENT HIGH\n"+ 
-    "AND RECENT LOW MINUS 15% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
-    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSION WITH IRAN\n"+
-    "OUR TARGET PRICE IS HIGHER THAN THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A BUY RATING\n")
+    "AND RECENT LOW MINUS 10% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
+    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSIONS\n"+
+    "WE BELIEVE THAT THE MARKET WILL BECOME BEARISH TOWARD THE END OF THE YEAR\n"+   
+    "OUR TARGET PRICE IS HIGHER THAN THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A 'BUY' RATING")
 elif str(my_target_price) < latest_close: #> EXPLANATION FOR SELL RATING
     print(f"RECOMMENDATION REASON: OUR TARGET PRICE IS BASED UPON THE AVERAGE OF RECENT HIGH\n"+ 
-    "AND RECENT LOW MINUS 15% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
-    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSION WITH IRAN\n"+
-    "OUR TARGET PRICE IS LOWER THAN THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A SELL RATING\n")
-else: #> EXPLANATION FOR HOLD RATING
-    print(f"RECOMMENDATION REASON: OUR TARGET PRICE IS BASED UPON THE AVERAGE OF RECENT HIGH\n"+ 
-    "AND RECENT LOW MINUS 15% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
-    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSION WITH IRAN\n"+
-    "OUR TARGET PRICE IS SAME THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A HOLD RATING\n")
+    "AND RECENT LOW MINUS 10% DISCOUNT DUE TO THE RECENT MARKET VOLATILITY\n"+ 
+    "PRIMARILY RESULTED BY THE UNCERTAINY ON THE TRADE WAR AND OTHER GEOGRAPHICAL TENSIONS\n"+
+    "WE BELIEVE THAT THE MARKET WILL BECOME BEARISH TOWARD THE END OF THE YEAR\n"+     
+    "OUR TARGET PRICE IS LOWER THAN THE LATEST CLOSE PRICE THEREFORE, WE RECOMMEND A 'DO NOT BUY' RATING")
+    
 print("-------------------------")
-print(f"WRITING DATA TO CSV: {csv_file_path}...")
-print("YOUR OUTPUT TO CSV FILE IS COMPLETE")
+print(f"WRITING DATA TO CSV IN THE FOLLOWING PATH: {csv_file_path}...")
+print("YOUR OUTPUT TO CSV FILE IS NOW COMPLETE")
 print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")

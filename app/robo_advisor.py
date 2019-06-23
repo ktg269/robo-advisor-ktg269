@@ -4,7 +4,6 @@ import csv
 import json
 import os
 import datetime
-import re
 
 from dotenv import load_dotenv
 import requests
@@ -16,7 +15,7 @@ api_key =os.environ.get("ALPHAVANTAGE_API_KEY") # to obtain API_KEY from env fil
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price) #> 12,000.71
 
-def get_response(symbol):  #> To define and return the result after user input. TODO: How to integrate multiple inputs (for further challenge)
+def get_response(symbol):  #> To define and return the result after user input. 
     request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
     response = requests.get(request_url)
     parsed_response = json.loads(response.text)
@@ -94,7 +93,6 @@ if __name__ == "__main__":
                     " volume": daily_prices["5. volume"]
                 })
 
-
         # FORMATTING FOR DISPLAYING RESULT
 
         current_time = datetime.datetime.now()  #> current time
@@ -143,5 +141,4 @@ if __name__ == "__main__":
         print("-------------------------")
         print("HAPPY INVESTING!")
         print("-------------------------")
-
-
+        

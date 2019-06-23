@@ -2,6 +2,7 @@
 
 This is a robo-advisor-app (https://github.com/ktg269/robo-advisor-ktg269)
 
+This app will display the request date/time, last refresh date, latest close, recent high, recent low, our recommendation rating and explanation for a stock symbol entered by user.
 
 Issues requests to the [AlphaVantage Stock Market API](https://www.alphavantage.co/) in order to provide automated stock or cryptocurrency trading recommendations.
 
@@ -21,7 +22,7 @@ cd robo-advisor-ktg269
 
 > NOTE: subsequent usage and testing commands assume you are running them from the repository's root directory.
 
-Use Anaconda to create and activate a new virtual environment, perhaps called "stocks-env":
+Use Anaconda to create and activate a new virtual environment, perhaps called "stocks-env": 
 
 ```sh
 conda create -n stocks-env python=3.7 # (first time only)
@@ -42,10 +43,6 @@ After obtaining an API Key, create a new file in this repository called ".env", 
 
     ALPHAVANTAGE_API_KEY="your key"
 
-Don't worry, the ".env" has already been [ignored](/.gitignore) from version control for you!
-
-> NOTE: this app will try to use a "demo" API key if this environment variables is not configured.
-
 ## Usage
 
 Run the recommendation script:
@@ -65,6 +62,6 @@ pip install pytest
 Run tests:
 
 ```sh
-pytest
+pytest robo_advisor_test.py
 
 

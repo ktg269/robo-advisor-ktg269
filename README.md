@@ -67,4 +67,4 @@ Run tests:
 ```sh
 pytest
 
-## [License](/LICENSE.md)
+

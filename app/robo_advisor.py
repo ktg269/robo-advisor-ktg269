@@ -21,7 +21,7 @@ def get_response(symbol):  #> To define and return the result after user input. 
     parsed_response = json.loads(response.text)
     #print(response.status_code) #> 200
 
-    unacceptable_value = [1,2,3,4,5,6,7,8,9,0,"+","*","/","-"]
+    unacceptable_value = [1,2,3,4,5,6,7,8,9,0,"+","*","/","-"] # reference: slack discussion with classmates.
     if  str(unacceptable_value) in symbol: # to prevent HTML request for non-alphabetical entry
         print("SOMETHING WENT WRONG. YOUR INPUT IS EITHER INVALID OR WE ARE UNABLE TO FIND A STOCK\n"+
         "THAT MATCHES WITH THE SYMBOL YOU ENTERED. PLEASE CHECK THE SYMBOL AND TRY IT AGAIN. GOOD-BYE")
@@ -29,10 +29,10 @@ def get_response(symbol):  #> To define and return the result after user input. 
     
     try:
         parsed_response["Time Series (Daily)"]
-    except: #> "888888" will generate below error message
+    except: #> "OOPS" will generate below error message
         print("-------------------------")
         print("ERROR MESSAGE:")
-        print("SOMETHING WENT WRONG. YOUR INPUT IS EITHER INVALID OR WE ARE UNABLE TO FIND A STOCK\n"+
+        print("YOUR INPUT IS EITHER INVALID OR WE ARE UNABLE TO FIND A STOCK\n"+
         "THAT MATCHES WITH THE SYMBOL YOU ENTERED. PLEASE CHECK THE SYMBOL AND TRY IT AGAIN. GOOD-BYE")
         exit()
 
